@@ -2,7 +2,7 @@
 
 **Çok Ajanlı Yapay Zeka Destekli Karbon Ayak İzi Koçu**
 
-YZTA Bootcamp 2026 — Takım 17 | Yapay Zeka & Veri Bilimi Track
+YZTA Bootcamp 2026 — Takım 17
 
 ---
 
@@ -14,11 +14,11 @@ YZTA Takım 17 (CarbOn)
 
 | Kişi | Rol | Teknik Sorumluluk |
 |---|---|---|
-| Melis Can | Product Owner + Developer | Coach Agent — LLM prompt mühendisliği, backlog yönetimi |
-| Eda Kaygulu | Scrum Master + Developer | Orkestratör — ajan koordinasyonu, sprint takibi |
-| Rüya Sena Demirci | Developer | Tracking Agent — karbon hesaplama backend |
-| Furkan Emre İnce | Developer | Frontend/UI — veri giriş formu, sonuç ekranı |
-| Musa Barutçu | Developer | Insight Agent — trend analizi, hafıza katmanı |
+| Melis Can | Product Owner + Developer | 
+| Eda Kaygulu | Scrum Master + Developer |
+| Rüya Sena Demirci | Developer |
+| Furkan Emre İnce | Developer |
+| Musa Barutcu | Developer |
 
 ## Ürün İsmi
 

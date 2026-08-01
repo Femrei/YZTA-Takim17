@@ -154,6 +154,22 @@ def test_task_reset():
     assert d3["tasks"][0]["done"] == 0
 
 
+def test_task_deletion():
+    import uuid
+    user = f"del_user_{uuid.uuid4().hex[:6]}"
+    today = date.today().isoformat()
+    tasks = db.save_tasks(user, ["Task to delete"], today)
+    t_id = tasks[0]["id"]
+
+    # Delete task
+    del_res = client.post("/api/tasks/delete", json={"user": user, "task_id": t_id})
+    assert del_res.status_code == 200
+
+    # Verify task deleted
+    day_tasks = db.tasks_for_day(user, today)
+    assert len(day_tasks) == 0
+
+
 def test_user_registration_and_login():
     import uuid
     uid = uuid.uuid4().hex[:6]

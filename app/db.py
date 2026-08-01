@@ -387,6 +387,15 @@ def complete_task(username: str, task_id: int, done: int = 1) -> bool:
         return cur.rowcount > 0
 
 
+def delete_task(username: str, task_id: int) -> bool:
+    with get_conn() as conn:
+        cur = conn.execute(
+            "DELETE FROM tasks WHERE id = ? AND username = ?",
+            (task_id, username),
+        )
+        return cur.rowcount > 0
+
+
 def reset_tasks_for_day(username: str, task_date: str) -> None:
     with get_conn() as conn:
         conn.execute(

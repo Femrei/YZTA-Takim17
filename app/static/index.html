@@ -1131,6 +1131,21 @@
             }
         }
 
+        async function deleteTask(taskId) {
+            if (!currentAuthUser) return;
+            try {
+                await api('/api/tasks/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user: currentAuthUser.username, task_id: taskId })
+                });
+                showToast('Görev Silindi 🗑️', 'Tamamlanan görev listenizden silindi.');
+                loadDashboard();
+            } catch(e) {
+                alert('Görev silinemedi: ' + e.message);
+            }
+        }
+
         function showConfirm(message, onOk) {
             const modal = $('confirm-modal');
             $('confirm-modal-text').innerText = message;
@@ -1454,7 +1469,11 @@
                         </div>
                         <div class="flex justify-between items-center pt-2 border-t border-slate-50">
                             <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded">+${task.points} Puan</span>
-                            <button onclick="toggleTask(${task.id}, false, ${task.co2Save}, ${task.points})" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold underline">Geri Al</button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleTask(${task.id}, false, ${task.co2Save}, ${task.points})" class="text-[10px] text-slate-400 hover:text-brand-600 font-bold underline">Geri Al</button>
+                                <span class="text-slate-200">|</span>
+                                <button onclick="deleteTask(${task.id})" class="text-[10px] text-rose-500 hover:text-rose-700 font-bold flex items-center gap-1"><i class="fa-solid fa-trash-can"></i> Sil</button>
+                            </div>
                         </div>
                     </div>
                 `).join('');

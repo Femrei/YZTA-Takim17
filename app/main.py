@@ -237,11 +237,23 @@ def set_budget(body: BudgetIn):
     return {"user": body.user, "daily_budget_kg": body.daily_budget_kg}
 
 
+class TaskDeleteIn(BaseModel):
+    user: str
+    task_id: int
+
+
 @app.post("/api/tasks/complete")
 def complete_task(body: TaskDoneIn):
     if not db.complete_task(body.user, body.task_id, body.done):
         raise HTTPException(status_code=404, detail="Görev bulunamadı.")
     return {"done": body.task_id, "done_status": body.done, "streak_days": db.streak_days(body.user)}
+
+
+@app.post("/api/tasks/delete")
+def delete_task(body: TaskDeleteIn):
+    if not db.delete_task(body.user, body.task_id):
+        raise HTTPException(status_code=404, detail="Görev bulunamadı.")
+    return {"status": "success", "task_id": body.task_id}
 
 
 @app.post("/api/tasks/reset")

@@ -1550,19 +1550,23 @@
                 $('today-co2-val').innerText = (d.insight.today_total_kg || 0).toFixed(1);
                 renderRing(d.insight.today_total_kg || 0, dailyBudget, d.insight.daily_avg_kg || 0);
 
-                const percent = Math.min(((d.insight.today_total_kg || 0) / dailyBudget) * 100, 100);
+                const todayKg = d.insight.today_total_kg || 0;
+                const percent = Math.min((todayKg / dailyBudget) * 100, 100);
                 const progressBar = $('budget-progress-bar');
                 progressBar.style.width = `${percent}%`;
-                if (percent >= 100) {
+
+                if (todayKg > dailyBudget) {
                     progressBar.className = "bg-red-500 h-full rounded-full transition-all duration-500";
-                    $('budget-compare-text').innerText = "Bugünlük karbon bütçenizi aştınız!";
+                    $('budget-compare-text').innerText = `Bugünlük bütçenizi aştınız! (${todayKg.toFixed(1)} / ${dailyBudget.toFixed(1)} kg)`;
                     $('budget-compare-text').className = "text-[11px] text-red-500 text-center font-semibold mt-1 block";
-                } else {
+                } else if (todayKg === 0) {
                     progressBar.className = "bg-brand-500 h-full rounded-full transition-all duration-500";
-                    $('budget-compare-text').innerText = d.insight.vs_turkey_pct > 0 
-                        ? `Türkiye ortalamasının %${d.insight.vs_turkey_pct}'i seviyesindesiniz`
-                        : 'Henüz veri girilmedi';
+                    $('budget-compare-text').innerText = `Henüz bugün veri girilmedi (Limit: ${dailyBudget.toFixed(1)} kg)`;
                     $('budget-compare-text').className = "text-[11px] text-slate-400 text-center mt-1 block";
+                } else {
+                    progressBar.className = "bg-emerald-500 h-full rounded-full transition-all duration-500";
+                    $('budget-compare-text').innerText = `Bütçe içindesiniz! (${todayKg.toFixed(1)} / ${dailyBudget.toFixed(1)} kg)`;
+                    $('budget-compare-text').className = "text-[11px] text-emerald-600 text-center font-semibold mt-1 block";
                 }
 
                 $('summary').innerText = d.insight.summary;

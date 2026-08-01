@@ -1417,10 +1417,10 @@
                     </div>
                     ${task.done 
                         ? `<div class="flex items-center gap-2 shrink-0">
-                               <span class="text-brand-600 font-bold text-base"><i class="fa-solid fa-circle-check"></i></span>
+                               <span class="text-emerald-600 font-bold text-base"><i class="fa-solid fa-circle-check"></i></span>
                                <button onclick="toggleTask(${task.id}, false, ${task.co2Save}, ${task.points})" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold underline">Geri Al</button>
                            </div>` 
-                        : `<button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="bg-brand-50 hover:bg-brand-100 text-brand-600 font-bold px-2.5 py-1.5 rounded-lg transition-colors shrink-0">Yap</button>`
+                        : `<button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm shrink-0">Yap ✓</button>`
                     }
                 </div>
             `).join('');
@@ -1449,7 +1449,7 @@
                                 <span>Tasarruf: <strong class="text-brand-600">~${task.co2Save.toFixed(1)} kg CO₂</strong></span>
                                 <span>Puan: <strong class="text-amber-500">+${task.points}</strong></span>
                             </div>
-                            <button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="w-full bg-slate-50 text-slate-600 hover:bg-brand-50 hover:text-brand-600 font-bold py-2.5 px-4 rounded-xl text-xs transition-colors">Görevi Tamamla</button>
+                            <button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5">Görevi Tamamla ✨</button>
                         </div>
                     </div>
                 `).join('');

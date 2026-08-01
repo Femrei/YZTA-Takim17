@@ -1,395 +1,1013 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CarbOn — Karbon Ayak İzi Koçu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-:root{
-  --paper:#F1F5EC; --card:#FFFFFF; --ink:#13251B; --ink-soft:#4A5C50;
-  --leaf:#2E7D4F; --leaf-deep:#1C5A38; --amber:#E39A2D; --clay:#C4573A;
-  --ring-track:#DCE7D8; --line:#E3EADF; --radius:18px;
-  --shadow:0 1px 2px rgba(19,37,27,.05),0 8px 24px rgba(19,37,27,.06);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Manrope',system-ui,sans-serif;background:var(--paper);color:var(--ink);
-  background-image:radial-gradient(circle at 85% -10%,rgba(46,125,79,.08),transparent 45%);
-  min-height:100vh;line-height:1.55}
-h1,h2,h3{font-family:'Fraunces',serif;font-weight:650;letter-spacing:-.01em}
-.wrap{max-width:1140px;margin:0 auto;padding:24px 20px 64px}
-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:6px 0 26px;flex-wrap:wrap}
-.logo{display:flex;align-items:baseline;gap:10px}
-.logo h1{font-size:1.9rem}
-.logo .leafdot{color:var(--leaf)}
-.logo small{color:var(--ink-soft);font-size:.8rem;font-weight:600}
-.userbox{display:flex;gap:8px;align-items:center}
-.userbox input{border:1.5px solid var(--line);background:var(--card);border-radius:12px;
-  padding:9px 12px;font:inherit;width:170px}
-.userbox input:focus{outline:2px solid var(--leaf);outline-offset:1px;border-color:transparent}
-.grid{display:grid;grid-template-columns:380px 1fr;gap:22px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
-.card h2{font-size:1.15rem;margin-bottom:14px}
-.card h2 .sub{display:block;font-family:'Manrope';font-size:.78rem;font-weight:600;color:var(--ink-soft);letter-spacing:.02em;margin-top:2px}
-.stack{display:flex;flex-direction:column;gap:22px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbOn - Kişisel Karbon Ayak İzi Takibi</title>
+    <!-- Tailwind CSS, Fontlar, İkonlar ve Grafik Kütüphanesi -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-/* ---- signature: budget ring ---- */
-.ringwrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0 2px}
-.ring{position:relative;width:210px;height:210px}
-.ring svg{transform:rotate(-90deg)}
-.ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.ring .kg{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:650;line-height:1}
-.ring .lbl{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;margin-top:6px}
-.budgetline{font-size:.85rem;color:var(--ink-soft);text-align:center}
-.budgetline b{color:var(--ink)}
-.budgetline button{background:none;border:none;color:var(--leaf);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
-.streak{display:inline-flex;align-items:center;gap:6px;background:#FBF3E3;color:#8A5E12;
-  border-radius:999px;padding:5px 12px;font-size:.8rem;font-weight:700}
-
-/* ---- form ---- */
-.seg{display:flex;background:var(--paper);border-radius:12px;padding:4px;gap:4px;margin-bottom:14px}
-.seg button{flex:1;border:none;background:transparent;border-radius:9px;padding:9px 0;font:inherit;font-weight:700;color:var(--ink-soft);cursor:pointer}
-.seg button.on{background:var(--card);color:var(--leaf-deep);box-shadow:var(--shadow)}
-label{display:block;font-size:.8rem;font-weight:700;color:var(--ink-soft);margin:12px 0 5px}
-select,input[type=number],input[type=date]{width:100%;border:1.5px solid var(--line);border-radius:12px;
-  padding:11px 12px;font:inherit;background:var(--card)}
-select:focus,input:focus{outline:2px solid var(--leaf);outline-offset:1px;border-color:transparent}
-.btn{width:100%;margin-top:16px;border:none;border-radius:12px;padding:13px;font:inherit;font-weight:700;
-  background:var(--leaf);color:#fff;cursor:pointer;transition:background .15s}
-.btn:hover{background:var(--leaf-deep)}
-.btn:disabled{opacity:.6;cursor:wait}
-.result{margin-top:12px;font-size:.88rem;background:#EDF6EF;border:1px solid #CFE6D6;border-radius:12px;padding:11px 13px;display:none}
-.result.err{background:#FBEEE9;border-color:#EDCBBE;color:var(--clay)}
-
-/* ---- insight ---- */
-.summary{font-size:1rem;background:linear-gradient(135deg,#F3F8F0,#EDF4F6);border-radius:14px;padding:16px 18px;border:1px solid var(--line)}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:14px}
-.metric{background:var(--paper);border-radius:12px;padding:12px 14px}
-.metric .v{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:650}
-.metric .k{font-size:.72rem;font-weight:700;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.chip{background:var(--paper);border-radius:999px;padding:6px 13px;font-size:.8rem;font-weight:600;color:var(--ink-soft)}
-.chip b{color:var(--ink)}
-canvas{max-height:260px}
-
-/* ---- tasks ---- */
-.task{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
-.task:last-child{border-bottom:none}
-.task input{margin-top:4px;accent-color:var(--leaf);width:17px;height:17px;cursor:pointer}
-.task.done span{text-decoration:line-through;color:var(--ink-soft)}
-.task span{font-size:.92rem}
-.provider{font-size:.72rem;color:var(--ink-soft);margin-top:8px}
-.mini{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:7px 13px;font:inherit;font-size:.82rem;font-weight:700;color:var(--leaf-deep);cursor:pointer}
-.mini:hover{border-color:var(--leaf)}
-.rowhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-
-/* ---- table ---- */
-table{width:100%;border-collapse:collapse;font-size:.86rem}
-th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);padding:8px 6px;border-bottom:1.5px solid var(--line)}
-td{padding:9px 6px;border-bottom:1px solid var(--line)}
-td.num{text-align:right;font-variant-numeric:tabular-nums}
-.del{background:none;border:none;color:var(--clay);cursor:pointer;font-size:1rem}
-.empty{color:var(--ink-soft);font-size:.88rem;padding:14px 0}
-.exports{display:flex;gap:8px}
-footer{margin-top:36px;text-align:center;font-size:.78rem;color:var(--ink-soft)}
-@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
-</style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f2f8f4',
+                            100: '#e1efe6',
+                            200: '#c5dfcf',
+                            500: '#1b5e3a', // Doğa Yeşili
+                            600: '#124429',
+                        },
+                        accent: {
+                            500: '#f97316', // Turuncu Vurgu
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['Comfortaa', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="logo">
-      <h1><span class="leafdot">●</span> CarbOn</h1>
-      <small>çok ajanlı karbon ayak izi koçu</small>
-    </div>
-    <div class="userbox">
-      <label for="user" style="margin:0">Kullanıcı</label>
-      <input id="user" placeholder="adınız" autocomplete="off">
-    </div>
-  </header>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col">
 
-  <div class="grid">
-    <!-- SOL SÜTUN -->
-    <div class="stack">
-      <div class="card">
-        <div class="ringwrap">
-          <div class="ring">
-            <svg width="210" height="210" viewBox="0 0 210 210" aria-label="Günlük karbon bütçesi">
-              <circle cx="105" cy="105" r="92" fill="none" stroke="var(--ring-track)" stroke-width="16"/>
-              <circle id="ringOuter" cx="105" cy="105" r="92" fill="none" stroke="var(--leaf)" stroke-width="16"
-                      stroke-linecap="round" stroke-dasharray="578" stroke-dashoffset="578"/>
-              <circle cx="105" cy="105" r="70" fill="none" stroke="var(--ring-track)" stroke-width="8" opacity=".6"/>
-              <circle id="ringInner" cx="105" cy="105" r="70" fill="none" stroke="var(--amber)" stroke-width="8"
-                      stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440" opacity=".9"/>
-            </svg>
-            <div class="center">
-              <div class="kg" id="todayKg">0</div>
-              <div class="lbl">kg CO₂e · bugün</div>
+    <!-- ÜST MENÜ / HEADER -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="w-full px-6 md:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🌱</span>
+                <span class="font-display font-bold text-xl text-brand-500 tracking-wide">CarbOn</span>
             </div>
-          </div>
-          <div class="budgetline">
-            Günlük bütçe: <b id="budgetVal">15</b> kg
-            <button id="editBudget">değiştir</button><br>
-            <span id="turkeyCmp"></span>
-          </div>
-          <div class="streak" id="streak" hidden>🔥 <span></span> günlük seri</div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <label for="user" class="text-xs font-bold text-slate-500 uppercase tracking-wide">Kullanıcı:</label>
+                    <input id="user" type="text" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-brand-500 bg-slate-50 text-slate-700 font-semibold w-28 transition-all" placeholder="adınız" autocomplete="off">
+                </div>
+                <span id="streak-badge" class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-full border border-amber-200/50">0 Günlük Seri 🔥</span>
+                <span id="points-badge" class="bg-brand-50 text-brand-500 text-xs font-bold px-3 py-1.5 rounded-full border border-brand-100">100 Yeşil Puan 🌟</span>
+            </div>
         </div>
-      </div>
+    </header>
 
-      <div class="card">
-        <h2>Veri Girişi <span class="sub">Takip Ajanı hesaplar, koç yorumlar</span></h2>
-        <div class="seg" role="tablist">
-          <button id="segT" class="on">🚌 Ulaşım</button>
-          <button id="segE">⚡ Elektrik</button>
+    <!-- ANA İÇERİK ALANI -->
+    <main class="flex-1 w-full px-6 md:px-8 py-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- YAN NAVİGASYON (LEFT SIDEBAR) -->
+        <aside class="md:col-span-3 lg:col-span-2 flex flex-col gap-2">
+            <button id="nav-dashboard" onclick="switchTab('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-brand-50 text-brand-500">
+                <i class="fa-solid fa-chart-pie text-base"></i>
+                <span>Kontrol Paneli</span>
+            </button>
+            <button id="nav-data-entry" onclick="switchTab('data-entry')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-plus text-base"></i>
+                <span>Veri Girişi</span>
+            </button>
+            <button id="nav-coach" onclick="switchTab('coach')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-leaf text-base"></i>
+                <span>Yeşil Koç</span>
+                <span id="badge-tasks" class="ml-auto bg-accent-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+            </button>
+        </aside>
+
+        <!-- SEKMELER (TAB CONTENT) -->
+        <section class="md:col-span-9 lg:col-span-10">
+
+            <!-- 1. SEKME: KONTROL PANELİ -->
+            <div id="tab-dashboard" class="space-y-6">
+                <!-- Özet Kartları -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Bugünlük durum (Dairesel Progress) -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 flex flex-col items-center justify-center relative overflow-hidden">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Bugünkü Tüketim</h3>
+                        <div class="relative w-40 h-40 flex items-center justify-center">
+                            <svg class="absolute top-0 left-0 w-full h-full transform -rotate-90">
+                                <!-- Outer Track (Today) -->
+                                <circle cx="80" cy="80" r="70" class="stroke-slate-100 fill-none" stroke-width="8"></circle>
+                                <!-- Outer Progress -->
+                                <circle id="ringOuter" cx="80" cy="80" r="70" class="stroke-brand-500 fill-none transition-all duration-500" stroke-width="8" stroke-dasharray="440" stroke-dashoffset="440"></circle>
+                                <!-- Inner Track (Week Avg) -->
+                                <circle cx="80" cy="80" r="55" class="stroke-slate-50 fill-none" stroke-width="5" opacity="0.6"></circle>
+                                <!-- Inner Progress -->
+                                <circle id="ringInner" cx="80" cy="80" r="55" class="stroke-amber-500 fill-none transition-all duration-500" stroke-width="5" stroke-dasharray="346" stroke-dashoffset="346" opacity="0.9"></circle>
+                            </svg>
+                            <div class="text-center z-10">
+                                <span id="today-co2-val" class="text-3xl font-bold text-slate-800">0.0</span>
+                                <span class="text-xs text-slate-400 block font-medium">kg CO₂e</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-col items-center">
+                            <p class="text-xs text-slate-500">Günlük Limit: <span id="budget-val" class="font-bold text-slate-700">15.0</span> kg</p>
+                            <button onclick="changeBudget()" class="text-[10px] text-brand-500 hover:text-brand-600 font-bold mt-1 underline">Limiti Değiştir</button>
+                        </div>
+                    </div>
+
+                    <!-- Haftalık Toplam ve Ortalama -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Haftalık Toplam</h3>
+                            <p class="text-3xl font-bold text-slate-800"><span id="stat-weekly">0.0</span> <span class="text-sm font-semibold text-slate-400">kg</span></p>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3 mt-4">
+                            <p class="text-xs text-slate-500">Günlük Ortalama: <span id="stat-daily-avg" class="font-bold text-slate-700">0.0</span> kg</p>
+                            <div class="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+                                <div id="budget-progress-bar" class="bg-brand-500 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                            </div>
+                            <span id="budget-compare-text" class="text-[11px] text-slate-400 mt-1 block text-center">Henüz veri girilmedi</span>
+                        </div>
+                    </div>
+
+                    <!-- Doğaya Etki / Ağaç Denkliği -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Karbon Denkliği</h3>
+                            <p class="text-sm text-slate-600 leading-relaxed">Ürettiğiniz karbonu nötrlemek için gereken yıllık ağaç adedi:</p>
+                        </div>
+                        <div class="flex items-center gap-3 bg-brand-50 p-3 rounded-xl border border-brand-100/50 mt-2">
+                            <span class="text-2xl">🌳</span>
+                            <div>
+                                <p class="text-lg font-bold text-brand-500"><span id="eq-trees">0.0</span> Ağaç</p>
+                                <p class="text-[10px] text-slate-400">veya araçla <span id="eq-cars">0</span> km daha az yol gitmelisiniz.</p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <!-- Yapay Zeka İçgörü Kartı -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Yapay Zeka İçgörüsü</h2>
+                        <p class="text-xs text-slate-400">İçgörü Ajanı'nın son 30 günlük trend analizi.</p>
+                    </div>
+                    <div id="summary" class="text-sm text-slate-700 leading-relaxed bg-gradient-to-br from-emerald-50/50 to-teal-50/50 border border-emerald-100/50 p-4 rounded-xl font-medium">
+                        Verileriniz yükleniyor…
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bu Hafta</span>
+                            <span id="mWeek" class="text-lg font-bold text-slate-800">–</span> <span class="text-xs text-slate-400">kg</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Günlük Ort.</span>
+                            <span id="mAvg" class="text-lg font-bold text-slate-800">–</span> <span class="text-xs text-slate-400">kg</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Haftalık Değişim</span>
+                            <span id="mChange" class="text-lg font-bold text-slate-800">–</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Son 30 Gün</span>
+                            <span id="mMonth" class="text-lg font-bold text-slate-800">–</span> <span class="text-xs text-slate-400">kg</span>
+                        </div>
+                    </div>
+                    <div id="equivChips" class="flex flex-wrap gap-2 pt-2">
+                        <!-- dynamic chips -->
+                    </div>
+                </div>
+
+                <!-- 30 Günlük Trend Kartı -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">30 Günlük Karbon Salınım Trendi</h2>
+                    <div class="relative w-full overflow-hidden" style="height: 220px;">
+                        <canvas id="trendChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+
+
+                <!-- Görevler & Son İşlemler İkili Bölüm -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Aktif Görevler (Mini Liste) -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                            <h3 class="font-bold text-sm text-slate-800">Günlük Yeşil Öneriler</h3>
+                            <span id="tasks-progress-summary" class="text-[11px] font-bold text-brand-500 bg-brand-50 px-2 py-0.5 rounded-full">0/0 Tamamlandı</span>
+                        </div>
+                        <div id="dashboard-tasks-list" class="space-y-2.5">
+                            <!-- JS tarafından doldurulacak -->
+                        </div>
+                    </div>
+
+                    <!-- Son Aktiviteler (Kısa Tablo) -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                            <h3 class="font-bold text-sm text-slate-800">Son İşlemler</h3>
+                            <button onclick="switchTab('data-entry')" class="text-xs text-brand-500 hover:text-brand-600 font-bold">Tümünü Gör</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[10px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2">Tarih</th>
+                                        <th class="pb-2">Tür</th>
+                                        <th class="pb-2 text-right">Miktar</th>
+                                        <th class="pb-2 text-right">CO₂</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-records-body" class="divide-y divide-slate-50">
+                                    <!-- JS tarafından doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SEKME: VERİ GİRİŞİ -->
+            <div id="tab-data-entry" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                    <!-- Giriş Formu -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 md:col-span-3 space-y-5">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Yeni Aktivite Ekle</h2>
+                            <p class="text-xs text-slate-400">Karbon emisyonunuzu hesaplamak için formu doldurun.</p>
+                        </div>
+
+                        <!-- Seçim Butonları (Ulaşım / Elektrik) -->
+                        <div class="bg-slate-100 p-1 rounded-xl flex gap-1 bg-slate-200/50">
+                            <button id="toggle-transport" onclick="toggleFormType('transport')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all bg-white text-slate-800 shadow-sm">
+                                <i class="fa-solid fa-car"></i> Ulaşım
+                            </button>
+                            <button id="toggle-electric" onclick="toggleFormType('electric')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all text-slate-500 hover:text-slate-800">
+                                <i class="fa-solid fa-plug"></i> Elektrik
+                            </button>
+                        </div>
+
+                        <form id="carbon-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                            <!-- Ortak Alan: Tarih -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5" for="activity-date">Aktivite Tarihi</label>
+                                <input type="date" id="activity-date" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                            </div>
+
+                            <!-- Ulaşım Alt Alanı -->
+                            <div id="transport-subfield" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5" for="transport-type">Araç Tipi</label>
+                                        <select id="transport-type" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-500 transition-colors bg-white">
+                                            <!-- JS dynamically builds options from factors API -->
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5" for="transport-distance">Mesafe (km)</label>
+                                        <input type="number" step="any" id="transport-distance" required placeholder="Örn: 25" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Elektrik Alt Alanı -->
+                            <div id="electric-subfield" class="hidden space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5" for="electric-usage">Kullanım Miktarı (kWh)</label>
+                                    <input type="number" step="any" id="electric-usage" placeholder="Örn: 120" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                                </div>
+                            </div>
+
+                            <!-- Gönder Butonu -->
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-4 rounded-xl text-sm transition-colors shadow-lg shadow-brand-500/10 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calculator"></i> Karbon Salınımını Hesapla
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Geçmiş Defteri (Tüm Kayıtlar) -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 md:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800">Kayıt Defteri</h2>
+                                <p id="records-total-count" class="text-xs text-slate-400">Toplam 0 kayıt bulunmaktadır.</p>
+                            </div>
+                            <div class="flex gap-2 shrink-0">
+                                <button id="expCsv" onclick="exportData('csv')" class="text-[10px] text-brand-500 hover:text-brand-600 border border-slate-200 px-2 py-1 rounded-lg font-bold transition-colors">CSV İndir</button>
+                                <button id="expJson" onclick="exportData('json')" class="text-[10px] text-slate-500 hover:text-slate-600 border border-slate-200 px-2 py-1 rounded-lg font-bold transition-colors">JSON</button>
+                            </div>
+                        </div>
+                        <div class="overflow-y-auto max-h-[350px] pr-1">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[10px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2">Tarih</th>
+                                        <th class="pb-2">Detay</th>
+                                        <th class="pb-2 text-right">Miktar</th>
+                                        <th class="pb-2 text-right">CO₂</th>
+                                        <th class="pb-2 text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logs-table-body" class="divide-y divide-slate-50">
+                                    <!-- JS tarafından doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. SEKME: YEŞİL KOÇ -->
+            <div id="tab-coach" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-50 pb-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Yeşil Koç Önerileri</h2>
+                            <p class="text-xs text-slate-400">Günlük yaşantınızda uygulayabileceğiniz çevre dostu görevler.</p>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="resetTasks()" class="text-xs text-slate-500 hover:text-brand-500 border border-slate-200 px-3 py-1.5 rounded-lg font-semibold transition-colors">Görevleri Sıfırla</button>
+                            <button onclick="refreshCoach()" class="text-xs text-slate-500 hover:text-brand-500 border border-slate-200 px-3 py-1.5 rounded-lg font-semibold transition-colors">Önerileri Yenile</button>
+                        </div>
+                    </div>
+
+                    <!-- İki Sütunlu Yapı: Aktif Öneriler & Tamamlananlar -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Sol Sütun: Aktif Öneriler (2 satır 4 sütun için grid-cols-4) -->
+                        <div class="lg:col-span-9 space-y-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Aktif Öneriler</h3>
+                            <div id="coach-tasks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <!-- dynamic active task cards -->
+                            </div>
+                        </div>
+                        
+                        <!-- Sağ Sütun: Tamamlananlar -->
+                        <div class="lg:col-span-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Tamamlananlar</h3>
+                            <div id="coach-completed-list" class="space-y-2">
+                                <!-- dynamic completed items -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sağlayıcı Bilgisi -->
+                    <div id="provider-container" class="text-[10px] text-slate-400 text-right pt-2 font-medium"></div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- TOAST (ANLIK BİLDİRİM) -->
+    <div id="toast-notif" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3.5 rounded-xl shadow-2xl flex items-center gap-2.5 hidden transition-all duration-300 transform translate-y-5 opacity-0 z-50">
+        <span id="toast-icon" class="text-emerald-400"><i class="fa-solid fa-circle-check"></i></span>
+        <div>
+            <p id="toast-bold-text" class="font-bold"></p>
+            <p id="toast-sub-text" class="text-[10px] text-slate-400">Karbon geçmişiniz başarıyla güncellendi.</p>
         </div>
-        <div id="formT">
-          <label for="vehicle">Araç tipi</label>
-          <select id="vehicle"></select>
-          <label for="km">Mesafe (km)</label>
-          <input id="km" type="number" min="0.1" step="0.1" placeholder="örn. 12.5">
-        </div>
-        <div id="formE" hidden>
-          <label for="kwh">Tüketim (kWh)</label>
-          <input id="kwh" type="number" min="0.1" step="0.1" placeholder="faturadaki kWh değeri">
-        </div>
-        <label for="edate">Tarih</label>
-        <input id="edate" type="date">
-        <button class="btn" id="submit">Hesapla ve kaydet</button>
-        <div class="result" id="result"></div>
-      </div>
     </div>
 
-    <!-- SAĞ SÜTUN -->
-    <div class="stack">
-      <div class="card">
-        <h2>İçgörü <span class="sub">İçgörü Ajanı'nın haftalık analizi</span></h2>
-        <div class="summary" id="summary">Verileriniz yükleniyor…</div>
-        <div class="metrics">
-          <div class="metric"><div class="v" id="mWeek">–</div><div class="k">bu hafta (kg)</div></div>
-          <div class="metric"><div class="v" id="mAvg">–</div><div class="k">günlük ort. (kg)</div></div>
-          <div class="metric"><div class="v" id="mChange">–</div><div class="k">haftalık değişim</div></div>
-          <div class="metric"><div class="v" id="mMonth">–</div><div class="k">son 30 gün (kg)</div></div>
+    <!-- ONAY MODALI (CONFIRM DIALOG) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-all duration-300 opacity-0">
+        <div class="bg-white rounded-2xl p-6 max-w-xs w-full mx-4 shadow-2xl border border-slate-100 space-y-4 transform scale-95 transition-all duration-300">
+            <div class="flex items-center gap-3 text-amber-500">
+                <span class="text-2xl"><i class="fa-solid fa-circle-question"></i></span>
+                <h3 class="font-bold text-slate-800 text-base">Emin misiniz?</h3>
+            </div>
+            <p id="confirm-modal-text" class="text-xs text-slate-500 leading-relaxed"></p>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button id="confirm-cancel" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition-colors">İptal</button>
+                <button id="confirm-ok" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition-colors shadow-lg shadow-brand-500/10">Evet</button>
+            </div>
         </div>
-        <div class="chips" id="equivChips"></div>
-      </div>
-
-      <div class="card">
-        <h2>30 Günlük Trend</h2>
-        <canvas id="trendChart" height="120"></canvas>
-      </div>
-
-      <div class="card">
-        <div class="rowhead">
-          <h2 style="margin:0">Bugünün Yeşil Görevleri <span class="sub">Koç Ajanı'ndan</span></h2>
-          <button class="mini" id="refreshCoach">Yenile</button>
-        </div>
-        <div id="tasks"><div class="empty">Veri girdiğinizde koçunuz size özel görevler hazırlar.</div></div>
-        <div class="provider" id="provider"></div>
-      </div>
-
-      <div class="card">
-        <div class="rowhead">
-          <h2 style="margin:0">Son Kayıtlar</h2>
-          <div class="exports">
-            <button class="mini" id="expCsv">CSV indir</button>
-            <button class="mini" id="expJson">JSON</button>
-          </div>
-        </div>
-        <div id="entriesWrap"><div class="empty">Henüz kayıt yok.</div></div>
-      </div>
     </div>
-  </div>
 
-  <footer>CarbOn · YZTA Bootcamp 2026 — Takım 17 · Elektrik katsayısı: 0.478 kg CO₂e/kWh (ETKB/EVÇED)</footer>
-</div>
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        // API Yardımcıları
+        const $ = id => document.getElementById(id);
+        const api = (p, opt) => fetch(p, opt).then(async r => {
+            if (!r.ok) { 
+                const e = await r.json().catch(() => ({detail: r.statusText})); 
+                throw new Error(e.detail || 'Hata'); 
+            }
+            return r.json();
+        });
 
-<script>
-const $ = id => document.getElementById(id);
-const api = (p, opt) => fetch(p, opt).then(async r => {
-  if (!r.ok) { const e = await r.json().catch(()=>({detail:r.statusText})); throw new Error(e.detail || 'Hata'); }
-  return r.json();
-});
-let username = localStorage.getItem('carbon_user') || 'misafir';
-let chart = null, dailyBudget = 15;
+        // Uygulama Durumu (State)
+        let username = localStorage.getItem('carbon_user') || 'misafir';
+        let dailyBudget = 15;
+        let chart = null;
+        let activeProvider = 'rule_based';
+        let state = {};
 
-$('user').value = username;
-$('edate').value = new Date().toISOString().slice(0,10);
-$('user').addEventListener('change', () => {
-  username = $('user').value.trim() || 'misafir';
-  localStorage.setItem('carbon_user', username);
-  loadDashboard();
-});
+        const SUBTYPE_LABELS = {
+            'car_petrol': 'Otomobil (benzinli)',
+            'car_diesel': 'Otomobil (dizel)',
+            'car_hybrid': 'Otomobil (hibrit)',
+            'car_ev': 'Otomobil (elektrikli)',
+            'motorcycle': 'Motosiklet',
+            'bus': 'Otobüs',
+            'minibus': 'Minibüs/Dolmuş',
+            'metro': 'Metro/Tramvay',
+            'train': 'Tren',
+            'plane_domestic': 'Uçak (iç hat)',
+            'walk_bike': 'Yürüyüş/Bisiklet',
+            'grid': 'Elektrik (şebeke)'
+        };
 
-/* segment değişimi */
-let mode = 'transport';
-$('segT').onclick = () => { mode='transport'; $('segT').classList.add('on'); $('segE').classList.remove('on'); $('formT').hidden=false; $('formE').hidden=true; };
-$('segE').onclick = () => { mode='electricity'; $('segE').classList.add('on'); $('segT').classList.remove('on'); $('formE').hidden=false; $('formT').hidden=true; };
+        const categoryMap = {
+            transport: { label: 'Ulaşım', icon: '🚲', bg: 'bg-emerald-50 text-brand-500' },
+            energy: { label: 'Enerji', icon: '🔌', bg: 'bg-amber-50 text-amber-700' },
+            recycle: { label: 'Geri Dönüşüm', icon: '♻️', bg: 'bg-blue-50 text-blue-700' },
+            default: { label: 'Yeşil Yaşam', icon: '🌱', bg: 'bg-emerald-50 text-brand-500' }
+        };
 
-/* araç tiplerini yükle */
-api('/api/factors').then(f => {
-  $('vehicle').innerHTML = Object.entries(f.transport)
-    .map(([k,v]) => `<option value="${k}">${v.label} — ${v.kg_per_km} kg/km</option>`).join('');
-});
+        // --- SEKME DEĞİŞTİRME MANTIĞI ---
+        function switchTab(tabId) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-data-entry').classList.add('hidden');
+            document.getElementById('tab-coach').classList.add('hidden');
 
-/* veri girişi → orkestratör pipeline */
-$('submit').onclick = async () => {
-  const btn = $('submit'), res = $('result');
-  const amount = mode==='transport' ? parseFloat($('km').value) : parseFloat($('kwh').value);
-  btn.disabled = true; res.style.display='none';
-  try {
-    const out = await api('/api/entries', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        user: username, category: mode,
-        subtype: mode==='transport' ? $('vehicle').value : 'grid',
-        amount, entry_date: $('edate').value || null
-      })
-    });
-    res.className='result';
-    res.innerHTML = `✅ <b>${out.entry.co2_kg} kg CO₂e</b> eklendi (${out.entry.label}, ${out.entry.amount} ${out.entry.unit}). Koçunuz önerilerini güncelledi.`;
-    res.style.display='block';
-    $('km').value=''; $('kwh').value='';
-    renderAll(out.insight, out.coach);
-    loadEntries();
-  } catch(e) {
-    res.className='result err'; res.textContent='⚠️ ' + e.message; res.style.display='block';
-  } finally { btn.disabled=false; }
-};
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-/* koç yenile */
-$('refreshCoach').onclick = async () => {
-  $('provider').textContent = 'Koç düşünüyor…';
-  try {
-    const out = await api(`/api/coach/refresh?user=${encodeURIComponent(username)}`, {method:'POST'});
-    renderAll(out.insight, out.coach);
-  } catch(e){ $('provider').textContent = e.message; }
-};
+            const navButtons = ['dashboard', 'data-entry', 'coach'];
+            navButtons.forEach(btn => {
+                const el = document.getElementById(`nav-${btn}`);
+                if (btn === tabId) {
+                    el.classList.add('bg-brand-50', 'text-brand-500');
+                    el.classList.remove('text-slate-600', 'hover:bg-slate-50');
+                } else {
+                    el.classList.remove('bg-brand-50', 'text-brand-500');
+                    el.classList.add('text-slate-600', 'hover:bg-slate-50');
+                }
+            });
+        }
 
-/* bütçe */
-$('editBudget').onclick = async () => {
-  const v = prompt('Günlük karbon bütçeniz (kg CO₂e):', dailyBudget);
-  if (!v) return;
-  const n = parseFloat(v);
-  if (!(n > 0)) return alert('Pozitif bir sayı girin.');
-  await api('/api/budget', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({user: username, daily_budget_kg: n})});
-  loadDashboard();
-};
+        // --- FORM TÜRÜ DEĞİŞTİRME (ULAŞIM / ELEKTRİK) ---
+        let currentFormType = 'transport';
+        function toggleFormType(type) {
+            currentFormType = type;
+            const transportBtn = document.getElementById('toggle-transport');
+            const electricBtn = document.getElementById('toggle-electric');
+            const transportField = document.getElementById('transport-subfield');
+            const electricField = document.getElementById('electric-subfield');
 
-/* dışa aktarma */
-$('expCsv').onclick = () => window.open(`/api/export?user=${encodeURIComponent(username)}&fmt=csv`);
-$('expJson').onclick = () => window.open(`/api/export?user=${encodeURIComponent(username)}&fmt=json`);
+            if (type === 'transport') {
+                transportBtn.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all bg-white text-slate-800 shadow-sm";
+                electricBtn.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all text-slate-500 hover:text-slate-800";
+                transportField.classList.remove('hidden');
+                electricField.classList.add('hidden');
+                document.getElementById('transport-distance').required = true;
+                document.getElementById('electric-usage').required = false;
+            } else {
+                electricBtn.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all bg-white text-slate-800 shadow-sm";
+                transportBtn.className = "flex-1 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-all text-slate-500 hover:text-slate-800";
+                electricField.classList.remove('hidden');
+                transportField.classList.add('hidden');
+                document.getElementById('transport-distance').required = false;
+                document.getElementById('electric-usage').required = true;
+            }
+        }
 
-/* ---- render ---- */
-function renderRing(todayKg, budget, weekAvg) {
-  $('todayKg').textContent = todayKg.toFixed(1);
-  $('budgetVal').textContent = budget;
-  const outer = Math.min(todayKg / budget, 1);
-  const inner = Math.min(weekAvg / budget, 1);
-  $('ringOuter').style.strokeDashoffset = 578 * (1 - outer);
-  $('ringOuter').style.stroke = todayKg > budget ? 'var(--clay)' : 'var(--leaf)';
-  $('ringInner').style.strokeDashoffset = 440 * (1 - inner);
-}
+        // --- DİNAMİK ARAÇ TİPLERİNİ YÜKLE ---
+        api('/api/factors').then(f => {
+            const selectEl = document.getElementById('transport-type');
+            if (selectEl) {
+                selectEl.innerHTML = Object.entries(f.transport)
+                    .map(([k,v]) => `<option value="${k}">${v.label} — ${v.kg_per_km} kg/km</option>`).join('');
+            }
+        });
 
-function renderInsight(ins) {
-  $('summary').textContent = ins.summary;
-  $('mWeek').textContent = ins.week_total_kg;
-  $('mAvg').textContent = ins.daily_avg_kg;
-  $('mChange').textContent = ins.week_change_pct == null ? '–' :
-      (ins.week_change_pct > 0 ? '+' : '') + ins.week_change_pct + '%';
-  $('mChange').style.color = ins.week_change_pct > 0 ? 'var(--clay)' : 'var(--leaf-deep)';
-  $('mMonth').textContent = ins.month_total_kg;
-  $('turkeyCmp').textContent = ins.daily_avg_kg > 0
-    ? `Türkiye ortalamasının %${ins.vs_turkey_pct}'i seviyesindesiniz`
-    : '';
-  const eq = ins.equivalents || {};
-  $('equivChips').innerHTML = ins.week_total_kg > 0 ? `
-    <div class="chip">🌳 <b>${eq.trees_year}</b> ağacın yıllık emdiği CO₂</div>
-    <div class="chip">🚗 <b>${eq.car_km}</b> km araba yolculuğu</div>
-    <div class="chip">☕ <b>${eq.coffee_cups}</b> fincan kahve</div>` : '';
-  if (ins.streak_days > 0) {
-    $('streak').hidden = false;
-    $('streak').querySelector('span').textContent = ins.streak_days;
-  } else $('streak').hidden = true;
+        // --- VERİ GÖNDERİMİ VE HESAPLAMA ---
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
 
-  renderRing(ins.today_total_kg || 0, dailyBudget, ins.daily_avg_kg || 0);
-  renderChart(ins.trend || []);
-}
+            const dateInput = document.getElementById('activity-date').value;
+            const amount = currentFormType === 'transport' 
+                ? parseFloat(document.getElementById('transport-distance').value) 
+                : parseFloat(document.getElementById('electric-usage').value);
+            const subtype = currentFormType === 'transport' 
+                ? document.getElementById('transport-type').value 
+                : 'grid';
 
-function renderChart(trend) {
-  const ctx = $('trendChart');
-  const labels = trend.map(t => t.date.slice(5));
-  const data = {
-    labels,
-    datasets: [
-      {label:'Ulaşım', data:trend.map(t=>t.transport), backgroundColor:'#2E7D4F', stack:'a', borderRadius:4},
-      {label:'Elektrik', data:trend.map(t=>t.electricity), backgroundColor:'#E39A2D', stack:'a', borderRadius:4},
-    ]
-  };
-  if (chart) { chart.data = data; chart.update(); return; }
-  chart = new Chart(ctx, {type:'bar', data, options:{
-    responsive:true, plugins:{legend:{position:'bottom', labels:{boxWidth:12, font:{family:'Manrope'}}}},
-    scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, title:{display:true, text:'kg CO₂e'}}}
-  }});
-}
+            try {
+                const out = await api('/api/entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user: username,
+                        category: currentFormType === 'transport' ? 'transport' : 'electricity',
+                        subtype,
+                        amount,
+                        entry_date: dateInput || null
+                    })
+                });
 
-function renderTasks(tasks, provider) {
-  const box = $('tasks');
-  if (!tasks || !tasks.length) {
-    box.innerHTML = '<div class="empty">Veri girdiğinizde koçunuz size özel görevler hazırlar.</div>';
-    $('provider').textContent=''; return;
-  }
-  box.innerHTML = tasks.map(t => `
-    <div class="task ${t.done?'done':''}">
-      <input type="checkbox" ${t.done?'checked disabled':''} data-id="${t.id}" aria-label="Görevi tamamla">
-      <span>${t.text}</span>
-    </div>`).join('');
-  box.querySelectorAll('input:not(:disabled)').forEach(cb => cb.onchange = async () => {
-    const out = await api('/api/tasks/complete', {method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({user: username, task_id: +cb.dataset.id})});
-    cb.disabled = true; cb.closest('.task').classList.add('done');
-    if (out.streak_days > 0){ $('streak').hidden=false; $('streak').querySelector('span').textContent = out.streak_days; }
-  });
-  if (provider) $('provider').textContent = 'Öneri kaynağı: ' +
-    ({gemini:'Gemini', openai:'OpenAI', rule_based:'yerleşik koç (LLM anahtarı tanımlı değil)'}[provider] || provider);
-}
+                showToast(`${out.entry.co2_kg} kg CO₂e eklendi.`);
+                document.getElementById('transport-distance').value = '';
+                document.getElementById('electric-usage').value = '';
+                
+                loadDashboard();
+            } catch(e) {
+                alert('Miktar eklenemedi: ' + e.message);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
 
-function renderAll(ins, coach) {
-  if (ins) renderInsight(ins);
-  if (coach && coach.tips) renderTasks(coach.tips, coach.provider);
-}
+        // --- BÜTÇE DEĞİŞTİRME ---
+        async function changeBudget() {
+            const newBudget = prompt("Yeni günlük CO₂ limitinizi girin (kg):", dailyBudget);
+            if (newBudget) {
+                const n = parseFloat(newBudget);
+                if (n > 0 && n <= 1000) {
+                    try {
+                        await api('/api/budget', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ user: username, daily_budget_kg: n })
+                        });
+                        loadDashboard();
+                    } catch(e) {
+                        alert('Bütçe güncellenemedi: ' + e.message);
+                    }
+                } else {
+                    alert('Lütfen 0 ile 1000 arasında pozitif bir değer giriniz.');
+                }
+            }
+        }
 
-async function loadEntries() {
-  const rows = await api(`/api/entries?user=${encodeURIComponent(username)}&limit=10`);
-  const wrap = $('entriesWrap');
-  if (!rows.length) { wrap.innerHTML = '<div class="empty">Henüz kayıt yok.</div>'; return; }
-  wrap.innerHTML = `<table><thead><tr><th>Tarih</th><th>Tür</th><th class="num">Miktar</th><th class="num">kg CO₂e</th><th></th></tr></thead>
-    <tbody>${rows.map(r => `<tr>
-      <td>${r.entry_date}</td>
-      <td>${r.category==='transport' ? '🚌' : '⚡'} ${r.subtype==='grid'?'Elektrik':r.subtype}</td>
-      <td class="num">${r.amount} ${r.unit}</td>
-      <td class="num"><b>${r.co2_kg}</b></td>
-      <td><button class="del" data-id="${r.id}" title="Sil" aria-label="Kaydı sil">✕</button></td>
-    </tr>`).join('')}</tbody></table>`;
-  wrap.querySelectorAll('.del').forEach(b => b.onclick = async () => {
-    await api(`/api/entries/${b.dataset.id}?user=${encodeURIComponent(username)}`, {method:'DELETE'});
-    loadDashboard();
-  });
-}
+        // --- GÖREV TAMAMLAMA VE GERİ ALMA (TOGGLE TASK) ---
+        async function toggleTask(taskId, done, co2Save, pointsEarned) {
+            try {
+                const out = await api('/api/tasks/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user: username, task_id: taskId, done: done ? 1 : 0 })
+                });
 
-async function loadDashboard() {
-  try {
-    const d = await api(`/api/dashboard?user=${encodeURIComponent(username)}`);
-    dailyBudget = d.user.daily_budget_kg;
-    renderInsight(d.insight);
-    renderTasks(d.tasks);
-    loadEntries();
-  } catch(e) { $('summary').textContent = 'Sunucuya ulaşılamadı: ' + e.message; }
-}
-loadDashboard();
-</script>
+                if (done) {
+                    showToast(`Tebrikler! +${pointsEarned} Yeşil Puan!`, `Doğayı ${co2Save.toFixed(1)} kg CO₂ emisyonundan kurtardınız!`, '<i class="fa-solid fa-leaf text-base"></i>', 'text-amber-500');
+                } else {
+                    showToast(`Görev Geri Alındı`, `Öneri yapılmadı olarak işaretlendi.`, '<i class="fa-solid fa-rotate-left text-base"></i>', 'text-slate-400');
+                }
+
+                loadDashboard();
+            } catch(e) {
+                alert('İşlem gerçekleştirilemedi: ' + e.message);
+            }
+        }
+
+        // --- ONAY PENCERESİ (CONFIRM MODAL) ---
+        function showConfirm(message, onOk, onCancel = null) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-modal-text').innerText = message;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+            
+            const hide = () => {
+                modal.classList.add('opacity-0');
+                modal.querySelector('div').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+            
+            document.getElementById('confirm-ok').onclick = () => {
+                hide();
+                if (onOk) onOk();
+            };
+            
+            document.getElementById('confirm-cancel').onclick = () => {
+                hide();
+                if (onCancel) onCancel();
+            };
+        }
+
+        // --- GÖREVLERİ SIFIRLA (RESET TASKS) ---
+        async function resetTasks() {
+            showConfirm("Bugünkü görevlerin tamamlanma durumunu sıfırlamak istiyor musunuz?", async () => {
+                try {
+                    await api(`/api/tasks/reset?user=${encodeURIComponent(username)}`, { method: 'POST' });
+                    loadDashboard();
+                    showToast("Görevler Sıfırlandı", "Tüm görevler ilk haline getirildi.");
+                } catch(e) {
+                    alert('Görevler sıfırlanamadı: ' + e.message);
+                }
+            });
+        }
+
+        // --- GÖREVLERİ YENİLE (REFRESH COACH) ---
+        async function refreshCoach() {
+            try {
+                await api(`/api/coach/refresh?user=${encodeURIComponent(username)}`, { method: 'POST' });
+                loadDashboard();
+            } catch(e) {
+                alert('Öneriler yenilenemedi: ' + e.message);
+            }
+        }
+
+        // --- KAYIT SİLME ---
+        async function deleteRecord(id) {
+            showConfirm("Bu emisyon kaydını silmek istediğinize emin misiniz?", async () => {
+                try {
+                    await api(`/api/entries/${id}?user=${encodeURIComponent(username)}`, { method: 'DELETE' });
+                    loadDashboard();
+                } catch(e) {
+                    alert('Kayıt silinemedi: ' + e.message);
+                }
+            });
+        }
+
+        // --- VERİ DIŞA AKTARMA ---
+        function exportData(fmt) {
+            window.open(`/api/export?user=${encodeURIComponent(username)}&fmt=${fmt}`);
+        }
+
+        // --- BİLDİRİM (TOAST) GÖSTERİMİ ---
+        function showToast(boldText, normalText = 'Karbon geçmişiniz başarıyla güncellendi.', icon = '<i class="fa-solid fa-circle-check"></i>', iconColor = 'text-emerald-400') {
+            const toast = document.getElementById('toast-notif');
+            document.getElementById('toast-bold-text').innerText = boldText;
+            document.getElementById('toast-sub-text').innerText = normalText;
+            
+            const iconSpan = document.getElementById('toast-icon');
+            if (iconSpan) {
+                iconSpan.innerHTML = icon;
+                iconSpan.className = iconColor;
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 10);
+
+            if (window.toastTimer) clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-5');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300);
+            }, 4000);
+        }
+
+        // --- DEĞER HASSAS GÖREV AYRIŞTIRMA ---
+        function parseTask(t) {
+            const text = t.text;
+            let category = 'default';
+            const txtLower = text.toLowerCase();
+            if (/(araba|yolculuk|ulaşım|uçak|tren|bisiklet|otobüs|metro|minibüs|km)/.test(txtLower)) {
+                category = 'transport';
+            } else if (/(cihaz|priz|elektrik|ampul|led|kombi|klima|bekleme|standby|kwh|enerji)/.test(txtLower)) {
+                category = 'energy';
+            } else if (/(atık|geri dönüşüm|plastik|kağıt|metal|ayrıştır)/.test(txtLower)) {
+                category = 'recycle';
+            }
+            
+            const match = text.match(/([0-9.,]+)\s*kg/);
+            let co2Save = 2.5;
+            if (match) {
+                co2Save = parseFloat(match[1].replace(',', '.'));
+            }
+            const points = Math.max(10, Math.round(co2Save * 4)) || 15;
+            
+            return {
+                id: t.id,
+                text: text,
+                done: t.done,
+                category,
+                co2Save,
+                points
+            };
+        }
+
+        // --- GRAPHICS RENDERING (CHART & RINGS) ---
+        function renderRing(todayKg, budget, weekAvg) {
+            const outer = Math.min(todayKg / budget, 1);
+            const inner = Math.min(weekAvg / budget, 1);
+            const ringOuter = document.getElementById('ringOuter');
+            const ringInner = document.getElementById('ringInner');
+            
+            ringOuter.style.strokeDashoffset = 440 * (1 - outer);
+            ringOuter.setAttribute('stroke', todayKg > budget ? '#ef4444' : '#1b5e3a');
+            
+            ringInner.style.strokeDashoffset = 346 * (1 - inner);
+        }
+
+        function renderChart(trend) {
+            const ctx = document.getElementById('trendChart');
+            if (!ctx) return;
+            const labels = trend.map(t => t.date.slice(5));
+            const data = {
+                labels,
+                datasets: [
+                    { label: 'Ulaşım', data: trend.map(t => t.transport), backgroundColor: '#1b5e3a', stack: 'a', borderRadius: 4 },
+                    { label: 'Elektrik', data: trend.map(t => t.electricity), backgroundColor: '#f97316', stack: 'a', borderRadius: 4 },
+                ]
+            };
+            if (chart) {
+                chart.data = data;
+                chart.update();
+                return;
+            }
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: '"Plus Jakarta Sans"' } } }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, title: { display: true, text: 'kg CO₂e' } }
+                    }
+                }
+            });
+        }
+
+
+
+        // --- GÖREVLERİN (TASKS) RENDER EDİLMESİ ---
+        function renderTasks(tasks) {
+            const dashboardList = document.getElementById('dashboard-tasks-list');
+            const coachGrid = document.getElementById('coach-tasks-grid');
+            const completedList = document.getElementById('coach-completed-list');
+            
+            if (!tasks || !tasks.length) {
+                dashboardList.innerHTML = '<div class="text-xs text-slate-400 py-4 text-center">Henüz bugün için bir göreviniz bulunmuyor.</div>';
+                coachGrid.innerHTML = '<div class="empty col-span-4 text-center py-8 text-slate-400 font-semibold">Henüz bugün için bir göreviniz bulunmuyor. Veri girdikçe koçunuz görevler hazırlayacaktır.</div>';
+                completedList.innerHTML = '<div class="text-xs text-slate-400 py-2 text-center">Görev bulunmuyor.</div>';
+                document.getElementById('tasks-progress-summary').innerText = '0/0 Tamamlandı';
+                document.getElementById('badge-tasks').innerText = '0';
+                return;
+            }
+            
+            const parsed = tasks.map(parseTask);
+            const activeTasks = parsed.filter(t => !t.done);
+            const completedTasks = parsed.filter(t => t.done);
+            
+            // Üst rozet sayaçları (tüm görev havuzuna göre)
+            document.getElementById('tasks-progress-summary').innerText = `${completedTasks.length}/${parsed.length} Tamamlandı`;
+            document.getElementById('badge-tasks').innerText = activeTasks.length;
+            
+            // 1) Dashboard Mini Listesi: Her zaman tam 3 öneri gösterir (aktifler öncelikli, kalanı tamamlanmışlarla doldurulur)
+            const dashboardTasks = [...activeTasks, ...completedTasks].slice(0, 3);
+            dashboardList.innerHTML = dashboardTasks.map(task => `
+                <div class="flex justify-between items-center p-3 rounded-xl border text-xs transition-all ${
+                    task.done 
+                    ? 'bg-slate-50/80 border-slate-200/50 opacity-60 line-through' 
+                    : 'bg-white border-slate-100 hover:border-brand-200 shadow-sm'
+                }">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-lg">${categoryMap[task.category].icon}</span>
+                        <div class="pr-2">
+                            <h4 class="font-bold text-slate-700">${categoryMap[task.category].label}</h4>
+                            <p class="text-[10px] text-slate-400">${task.text}</p>
+                        </div>
+                    </div>
+                    ${task.done 
+                        ? `<div class="flex items-center gap-2 shrink-0">
+                               <span class="text-brand-500 font-bold text-base"><i class="fa-solid fa-circle-check"></i></span>
+                               <button onclick="toggleTask(${task.id}, false, ${task.co2Save}, ${task.points})" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold underline">Geri Al</button>
+                           </div>` 
+                        : `<button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="bg-brand-50 hover:bg-brand-100 text-brand-500 font-bold px-2.5 py-1.5 rounded-lg transition-colors shrink-0">Yap</button>`
+                    }
+                </div>
+            `).join('');
+            
+            // 2) Yeşil Koç Aktif Öneriler (Sol Kolon): Sadece aktif (done = 0) görevleri gösterir
+            if (activeTasks.length === 0) {
+                coachGrid.innerHTML = `
+                    <div class="empty col-span-4 text-center py-10 bg-emerald-50/30 border border-dashed border-emerald-200 rounded-2xl p-6">
+                        <span class="text-3xl block mb-2">🎉</span>
+                        <h4 class="font-bold text-slate-800 text-sm">Harika İş!</h4>
+                        <p class="text-xs text-slate-500 mt-1">Bugünkü tüm yeşil önerileri başarıyla tamamladınız.</p>
+                    </div>
+                `;
+            } else {
+                coachGrid.innerHTML = activeTasks.map(task => `
+                    <div class="border border-slate-100 p-5 rounded-xl space-y-3 flex flex-col justify-between bg-white hover:shadow-md hover:border-brand-100 transition-all">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start">
+                                <span class="text-2xl">${categoryMap[task.category].icon}</span>
+                                <span class="${categoryMap[task.category].bg} text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${categoryMap[task.category].label}</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-slate-800">${categoryMap[task.category].label} Önerisi</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">${task.text}</p>
+                        </div>
+                        <div class="space-y-2.5 pt-3 border-t border-slate-50">
+                            <div class="flex justify-between text-[11px] text-slate-400 font-semibold">
+                                <span>Tasarruf: <strong class="text-brand-500">~${task.co2Save.toFixed(1)} kg CO₂</strong></span>
+                                <span>Puan: <strong class="text-amber-500">+${task.points}</strong></span>
+                            </div>
+                            <button onclick="toggleTask(${task.id}, true, ${task.co2Save}, ${task.points})" class="w-full bg-slate-50 text-slate-600 hover:bg-brand-50 hover:text-brand-500 font-bold py-2.5 px-4 rounded-xl text-xs transition-colors">Görevi Tamamla</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // 3) Yeşil Koç Tamamlanan Öneriler (Sağ Kolon): Sadece tamamlananları listeler
+            if (completedTasks.length === 0) {
+                completedList.innerHTML = `
+                    <div class="text-center py-8 border border-dashed border-slate-200 rounded-xl">
+                        <p class="text-[11px] text-slate-400">Henüz tamamlanan görev yok.</p>
+                    </div>
+                `;
+            } else {
+                completedList.innerHTML = completedTasks.map(task => `
+                    <div class="flex flex-col justify-between p-3.5 bg-white border border-slate-100 rounded-xl text-xs space-y-2 shadow-sm">
+                        <div class="flex items-start gap-2.5">
+                            <span class="text-emerald-500 text-sm mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                            <div class="space-y-0.5">
+                                <span class="font-bold text-[10px] uppercase text-slate-400 block">${categoryMap[task.category].label}</span>
+                                <p class="text-slate-600 leading-relaxed line-through">${task.text}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-50">
+                            <span class="text-[10px] text-amber-600 font-bold bg-amber-50 px-2 py-0.5 rounded">+${task.points} Puan</span>
+                            <button onclick="toggleTask(${task.id}, false, ${task.co2Save}, ${task.points})" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold underline">Geri Al</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- KAYITLARIN (ENTRIES) RENDER EDİLMESİ ---
+        function renderEntries(entries) {
+            const dashboardTable = document.getElementById('dashboard-records-body');
+            const logsTable = document.getElementById('logs-table-body');
+            
+            dashboardTable.innerHTML = '';
+            logsTable.innerHTML = '';
+            
+            if (!entries || !entries.length) {
+                dashboardTable.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-xs text-slate-400">Henüz kayıt yok.</td></tr>';
+                logsTable.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-xs text-slate-400">Henüz kayıt yok.</td></tr>';
+                document.getElementById('records-total-count').innerText = 'Toplam 0 kayıt bulunmaktadır.';
+                return;
+            }
+            
+            document.getElementById('records-total-count').innerText = `Toplam ${entries.length} kayıt bulunmaktadır.`;
+            
+            // Dashboard Mini Tablo (Maksimum 3 Kayıt)
+            entries.slice(0, 3).forEach(rec => {
+                const tr = document.createElement('tr');
+                tr.className = "text-xs border-b border-slate-50 hover:bg-slate-50/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 font-medium text-slate-500">${rec.entry_date}</td>
+                    <td class="py-3 font-semibold text-slate-700">${rec.category === 'electricity' ? '⚡ Elektrik' : '🚌 ' + (SUBTYPE_LABELS[rec.subtype] || rec.subtype)}</td>
+                    <td class="py-3 text-right text-slate-500">${rec.amount} ${rec.unit}</td>
+                    <td class="py-3 text-right font-bold text-slate-800">${rec.co2_kg} kg</td>
+                `;
+                dashboardTable.appendChild(tr);
+            });
+            
+            // Detaylı Kayıt Defteri Tablosu (Tüm Kayıtlar)
+            entries.forEach(rec => {
+                const tr = document.createElement('tr');
+                tr.className = "text-xs border-b border-slate-100 hover:bg-slate-50/40 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-4 font-medium text-slate-500">${rec.entry_date}</td>
+                    <td class="py-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                            rec.category === 'electricity' 
+                            ? 'bg-amber-50 text-amber-700' 
+                            : 'bg-emerald-50 text-brand-500'
+                        }">${rec.category === 'electricity' ? 'Enerji' : 'Ulaşım'}</span>
+                    </td>
+                    <td class="py-4 font-semibold text-slate-700">${rec.category === 'electricity' ? 'Elektrik' : (SUBTYPE_LABELS[rec.subtype] || rec.subtype)}</td>
+                    <td class="py-4 text-right font-medium text-slate-500">${rec.amount} ${rec.unit}</td>
+                    <td class="py-4 text-right font-bold text-slate-800">${rec.co2_kg} kg</td>
+                    <td class="py-4 text-center">
+                        <button onclick="deleteRecord(${rec.id})" class="text-rose-500 hover:text-rose-700 transition-colors p-1" title="Kayıt Sil">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                logsTable.appendChild(tr);
+            });
+        }
+
+        // --- VERİLERİN API'DEN YÜKLENMESİ VE UI GÜNCELLEMESİ ---
+        async function loadDashboard() {
+            try {
+                const d = await api(`/api/dashboard?user=${encodeURIComponent(username)}`);
+                dailyBudget = d.user.daily_budget_kg;
+
+                // Üst Rozetler ve Başlıklar
+                document.getElementById('streak-badge').innerText = `${d.insight.streak_days || 0} Günlük Seri 🔥`;
+                document.getElementById('points-badge').innerText = `${d.user.points} Yeşil Puan 🌟`;
+                document.getElementById('budget-val').innerText = dailyBudget.toFixed(1);
+                document.getElementById('stat-weekly').innerText = d.insight.week_total_kg.toFixed(1);
+                
+                // Günlük ortalama
+                document.getElementById('stat-daily-avg').innerText = d.insight.daily_avg_kg.toFixed(1);
+
+                // Karbon denklikleri
+                const eq = d.insight.equivalents || {};
+                document.getElementById('eq-trees').innerText = eq.trees_year || '0.0';
+                document.getElementById('eq-cars').innerText = eq.car_km || '0';
+
+                // Bugünün Tüketim Çemberi
+                document.getElementById('today-co2-val').innerText = (d.insight.today_total_kg || 0).toFixed(1);
+                renderRing(d.insight.today_total_kg || 0, dailyBudget, d.insight.daily_avg_kg || 0);
+
+                // Bütçe İlerleme Çubuğu
+                const percent = Math.min(((d.insight.today_total_kg || 0) / dailyBudget) * 100, 100);
+                const progressBar = document.getElementById('budget-progress-bar');
+                progressBar.style.width = `${percent}%`;
+                if (percent >= 100) {
+                    progressBar.classList.remove('bg-brand-500');
+                    progressBar.classList.add('bg-red-500');
+                    document.getElementById('budget-compare-text').innerText = "Bugünlük karbon bütçenizi aştınız!";
+                    document.getElementById('budget-compare-text').className = "text-[11px] text-red-500 text-center font-semibold mt-1 block";
+                } else {
+                    progressBar.classList.remove('bg-red-500');
+                    progressBar.classList.add('bg-brand-500');
+                    document.getElementById('budget-compare-text').innerText = d.insight.vs_turkey_pct > 0 
+                        ? `Türkiye ortalamasının %${d.insight.vs_turkey_pct}'i seviyesindesiniz`
+                        : 'Henüz veri girilmedi';
+                    document.getElementById('budget-compare-text').className = "text-[11px] text-slate-400 text-center mt-1 block";
+                }
+
+                // Yapay Zeka İçgörü Özeti
+                const summaryEl = document.getElementById('summary');
+                if (summaryEl) summaryEl.innerText = d.insight.summary;
+
+                // İçgörü Bölümü Detayları
+                const mWeekEl = document.getElementById('mWeek');
+                if (mWeekEl) mWeekEl.innerText = d.insight.week_total_kg.toFixed(1);
+                
+                const mAvgEl = document.getElementById('mAvg');
+                if (mAvgEl) mAvgEl.innerText = d.insight.daily_avg_kg.toFixed(1);
+                
+                const mChangeEl = document.getElementById('mChange');
+                if (mChangeEl) {
+                    mChangeEl.innerText = d.insight.week_change_pct == null ? '–' :
+                        (d.insight.week_change_pct > 0 ? '+' : '') + d.insight.week_change_pct + '%';
+                    mChangeEl.style.color = d.insight.week_change_pct > 0 ? '#ef4444' : '#1b5e3a';
+                    mChangeEl.className = `text-lg font-bold ${d.insight.week_change_pct > 0 ? 'text-red-500' : 'text-brand-500'}`;
+                }
+                
+                const mMonthEl = document.getElementById('mMonth');
+                if (mMonthEl) mMonthEl.innerText = d.insight.month_total_kg.toFixed(1);
+
+                // Eşdeğer Rozetleri
+                const equivChips = document.getElementById('equivChips');
+                if (equivChips) {
+                    equivChips.innerHTML = d.insight.week_total_kg > 0 ? `
+                        <span class="bg-brand-50 text-brand-600 text-xs px-3 py-1.5 rounded-full border border-brand-100/50 font-semibold">🌳 <b>${eq.trees_year}</b> Ağaç / Yıl</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-full border border-slate-200/50 font-semibold">🚗 <b>${eq.car_km}</b> Araç-km</span>
+                        <span class="bg-amber-50 text-amber-700 text-xs px-3 py-1.5 rounded-full border border-amber-200/50 font-semibold">☕ <b>${eq.coffee_cups}</b> Fincan Kahve</span>
+                    ` : '';
+                }
+
+                // Görevleri Yükle
+                renderTasks(d.tasks);
+
+                // Kayıtları Listele
+                renderEntries(d.recent_entries);
+
+                // Trend Grafiği Çiz
+                renderChart(d.insight.trend || []);
+
+                // Öneri Kaynağı (Sağlayıcı) Göster
+                const provName = { groq: 'Groq', gemini: 'Gemini', openai: 'OpenAI', rule_based: 'yerleşik koç (LLM anahtarı tanımlı değil)' }[activeProvider] || activeProvider;
+                document.getElementById('provider-container').innerText = `Öneri Kaynağı: ${provName}`;
+
+            } catch(e) {
+                const summaryEl = document.getElementById('summary');
+                if (summaryEl) {
+                    summaryEl.textContent = 'Veriler sunucudan çekilemedi: ' + e.message;
+                }
+                console.error('Veriler sunucudan çekilemedi: ' + e.message);
+            }
+        }
+
+        // --- SAYFA YÜKLENDİĞİNDE BAŞLANGIÇ AYARLARI ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('activity-date').value = today;
+
+            // Kullanıcı Alanını Dinle
+            const userInput = document.getElementById('user');
+            if (userInput) {
+                userInput.value = username;
+                userInput.addEventListener('change', () => {
+                    username = userInput.value.trim() || 'misafir';
+                    localStorage.setItem('carbon_user', username);
+                    loadDashboard();
+                });
+            }
+
+            // Sağlayıcıyı Sağlık Durumundan Kontrol Et
+            api('/api/health').then(h => {
+                activeProvider = h.llm;
+            });
+
+            // İlk Dashboard Yüklemesi
+            loadDashboard();
+        });
+    </script>
 </body>
 </html>

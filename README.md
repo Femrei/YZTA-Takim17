@@ -37,13 +37,14 @@ daha kişisel öneriler üretilir.
 ## Ürün Özellikleri
 
 - 🚌 Ulaşım (11 araç tipi) ve ⚡ elektrik girişinden anlık CO₂e hesabı
-- 📊 30 günlük kategori kırılımlı trend grafiği ve haftalık karşılaştırma
-- 🧠 İçgörü Ajanı'ndan sade, jargonsuz haftalık özet metni
-- 🤖 Koç Ajanı'ndan günlük 3 "yeşil görev" (Gemini/OpenAI veya yerleşik koç)
-- 🎯 Günlük karbon bütçesi halkası ve Türkiye ortalaması kıyası
+- 📊 Haftalık karşılaştırma ve Türkiye ortalaması kıyası
+- 🤖 Koç Ajanı'ndan günlük 8 "yeşil görev" (Groq/Gemini/OpenAI veya yerleşik koç)
+- 📊 Yapay Zeka İçgörü Analizi ve 30 Günlük Kategori Kırılımlı Grafik (Chart.js)
+- 🎯 Günlük karbon bütçesi halkası
 - 🔥 Seri (streak) takibi ve görev tamamlama
 - 🌳 Somutlaştırma: ağaç / araba-km / kahve eşdeğerleri
 - 📤 CSV/JSON veri dışa aktarma
+- 🐋 Docker ve Docker Compose ile kolay canlıya alma / deployment altyapısı
 - 🛡️ LLM anahtarı olmadan da tam çalışan fallback mimarisi
 
 ## Hedef Kitle
@@ -66,19 +67,20 @@ uvicorn app.main:app --reload
 
 Arayüz: http://localhost:8000 · API dokümanı: http://localhost:8000/docs
 
-> **Not:** `GEMINI_API_KEY` veya `OPENAI_API_KEY` tanımlı değilse Koç Ajanı
+> **Not:** `GROQ_API_KEY`, `GEMINI_API_KEY` veya `OPENAI_API_KEY` tanımlı değilse Koç Ajanı
 > otomatik olarak yerleşik kural tabanlı koça geçer; uygulama anahtarsız da
 > uçtan uca çalışır.
 
-### Docker (canlıya alma)
+### Docker ile Canlıya Alma / Deploy
 
 ```bash
-docker build -t carbon .
-docker run -p 8000:8000 --env-file .env carbon
-```
+# Script ile hızlı çalıştırma:
+bash run.sh
 
-Render / Railway / Fly.io gibi platformlara Dockerfile ile doğrudan deploy
-edilebilir (değerlendirmede "canlıya alınabilir" ekstra 10 puan).
+# Veya manuel olarak:
+docker build -t carbon-app .
+docker run -d -p 8000:8000 --name carbon-container --env-file .env carbon-app
+```
 
 ### Testler
 
@@ -101,19 +103,19 @@ Kullanıcı girdisi (km / kWh)
 │     → SQLite hafızaya yazar                       │
 │                                                   │
 │  2) Insight Agent                                 │
-│     30 günlük trend, kategori kırılımı,           │
-│     haftalık değişim, eşdeğerler, özet metin      │
+│     haftalık kıyas, Türkiye ortalaması kıyası,    │
+│     eşdeğerler                                    │
 │                                                   │
 │  3) Coach Agent                                   │
-│     Gemini → OpenAI → kural tabanlı (fallback)    │
-│     → günün 3 yeşil görevi                        │
+│     Groq → Gemini → OpenAI → kural tabanlı        │
+│     → günün 8 yeşil görevi                        │
 │                                                   │
 │  Her adım kendi hata sınırında; ajan düşerse      │
 │  akış kesilmez (fallback mekanizması).            │
 └───────────────────────────────────────────────────┘
         │
         ▼
-FastAPI REST → tek sayfa arayüz (Chart.js)
+FastAPI REST → tek sayfa arayüz
 ```
 
 ### Veri Kaynakları
@@ -138,11 +140,11 @@ carbon/
 │   │   ├── coach.py         # Koç Ajanı (LLM + fallback)
 │   │   └── orchestrator.py  # Orkestratör
 │   └── static/index.html    # arayüz
-├── tests/test_carbon.py     # 13 test
+├── tests/test_carbon.py     # 14 test
+├── Dockerfile               # Canlıya alma (deployment) container tanımı
+├── run.sh                   # Canlıya alma build/run otomasyon scripti
 ├── requirements.txt
-├── Dockerfile
-├── .env.example
-└── run.sh
+└── .env.example
 ```
 
 ## API Özeti

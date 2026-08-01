@@ -72,8 +72,15 @@ def ensure_user(username: str) -> dict:
                 "INSERT INTO users (username, daily_budget_kg, created_at) VALUES (?, ?, ?)",
                 (username, config.DEFAULT_DAILY_BUDGET_KG, _now()),
             )
-            return {"username": username, "daily_budget_kg": config.DEFAULT_DAILY_BUDGET_KG}
-        return dict(row)
+            budget = config.DEFAULT_DAILY_BUDGET_KG
+        else:
+            budget = row["daily_budget_kg"]
+        
+        return {
+            "username": username,
+            "daily_budget_kg": budget,
+            "points": get_user_points(username)
+        }
 
 
 def set_budget(username: str, budget_kg: float) -> None:
@@ -169,13 +176,21 @@ def tasks_for_day(username: str, task_date: str) -> list[dict]:
         return [dict(r) for r in rows]
 
 
-def complete_task(username: str, task_id: int) -> bool:
+def complete_task(username: str, task_id: int, done: int = 1) -> bool:
     with get_conn() as conn:
         cur = conn.execute(
-            "UPDATE tasks SET done = 1 WHERE id = ? AND username = ?",
-            (task_id, username),
+            "UPDATE tasks SET done = ? WHERE id = ? AND username = ?",
+            (done, task_id, username),
         )
         return cur.rowcount > 0
+
+
+def reset_tasks_for_day(username: str, task_date: str) -> None:
+    with get_conn() as conn:
+        conn.execute(
+            "UPDATE tasks SET done = 0 WHERE username = ? AND task_date = ?",
+            (username, task_date),
+        )
 
 
 def streak_days(username: str) -> int:
@@ -196,3 +211,17 @@ def streak_days(username: str) -> int:
         streak += 1
         cursor -= timedelta(days=1)
     return streak
+
+
+def get_user_points(username: str) -> int:
+    with get_conn() as conn:
+        task_count = conn.execute(
+            "SELECT COUNT(*) FROM tasks WHERE username = ? AND done = 1",
+            (username,)
+        ).fetchone()[0]
+        entry_count = conn.execute(
+            "SELECT COUNT(*) FROM entries WHERE username = ?",
+            (username,)
+        ).fetchone()[0]
+    
+    return 100 + (task_count * 15) + (entry_count * 10)

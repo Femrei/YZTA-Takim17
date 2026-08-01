@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-# CarbOn'u yerelde başlatır
-set -e
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port "${PORT:-8000}"
+#!/bin/bash
+# CarbOn’u yerel docker olarak çalıştırma scripti
+docker build -t carbon-app .
+docker run -d -p 8000:8000 --name carbon-container --env-file .env carbon-app

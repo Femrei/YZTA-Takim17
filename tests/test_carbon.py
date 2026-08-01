@@ -61,12 +61,12 @@ def test_week_change_detection():
 
 
 # ---------------------------------------------------------- Coach Agent
-def test_rule_based_coach_always_three_tips():
+def test_rule_based_coach_always_eight_tips():
     tips = _rule_based({"by_subtype": {"car_petrol": 20.0}, "top_category": "transport",
                         "week_total_kg": 20.0})
-    assert len(tips) == 3
+    assert len(tips) == 8
     tips_empty = _rule_based({"by_subtype": {}, "top_category": None, "week_total_kg": 0})
-    assert len(tips_empty) == 3
+    assert len(tips_empty) == 8
 
 
 def test_tip_json_extraction():
@@ -82,7 +82,7 @@ def test_full_pipeline():
     agents = [p["agent"] for p in out["pipeline"]]
     assert agents == ["tracking", "insight", "coach"]
     assert out["entry"]["co2_kg"] == pytest.approx(1.05, abs=0.01)
-    assert len(out["coach"]["tips"]) == 3
+    assert len(out["coach"]["tips"]) == 8
     # LLM anahtarı test ortamında yok → kural tabanlı fallback
     assert out["coach"]["provider"] == "rule_based"
 
@@ -127,3 +127,27 @@ def test_budget_update():
     assert r.status_code == 200
     d = client.get("/api/dashboard", params={"user": "api_u"}).json()
     assert d["user"]["daily_budget_kg"] == 12
+
+
+def test_task_reset():
+    user = "reset_u"
+    client.post("/api/entries", json={"user": user, "category": "transport",
+                                      "subtype": "bus", "amount": 5})
+    d = client.get("/api/dashboard", params={"user": user}).json()
+    task_id = d["tasks"][0]["id"]
+    
+    # complete task
+    rc = client.post("/api/tasks/complete", json={"user": user, "task_id": task_id})
+    assert rc.status_code == 200
+    
+    # verify it is completed
+    d2 = client.get("/api/dashboard", params={"user": user}).json()
+    assert d2["tasks"][0]["done"] == 1
+    
+    # reset tasks
+    rr = client.post("/api/tasks/reset", params={"user": user})
+    assert rr.status_code == 200
+    
+    # verify it is reset
+    d3 = client.get("/api/dashboard", params={"user": user}).json()
+    assert d3["tasks"][0]["done"] == 0

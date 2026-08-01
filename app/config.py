@@ -13,8 +13,10 @@ DB_PATH = os.getenv("CARBON_DB_PATH", str(BASE_DIR / "carbon.db"))
 # LLM sağlayıcı anahtarları (opsiyonel — yoksa kural tabanlı koç devreye girer)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama3-8b-8192")
 LLM_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "20"))
 
 # Günlük karbon bütçesi (kg CO2e) — Türkiye kişi başı ortalamasından türetilmiş

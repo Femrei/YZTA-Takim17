@@ -56,6 +56,7 @@ class BudgetIn(BaseModel):
 class TaskDoneIn(BaseModel):
     user: str
     task_id: int
+    done: int = 1
 
 
 # ------------------------------------------------------------- uçlar
@@ -110,10 +111,14 @@ def dashboard(user: str = Query(...)):
     u = db.ensure_user(user)
     analysis = insight.analyze(user)
     today = date.today().isoformat()
+    tasks = db.tasks_for_day(user, today)
+    if not tasks:
+        orchestrator.refresh_coaching(user)
+        tasks = db.tasks_for_day(user, today)
     return {
         "user": u,
         "insight": analysis,
-        "tasks": db.tasks_for_day(user, today),
+        "tasks": tasks,
         "recent_entries": db.all_entries(user)[:10],
     }
 
@@ -126,9 +131,16 @@ def set_budget(body: BudgetIn):
 
 @app.post("/api/tasks/complete")
 def complete_task(body: TaskDoneIn):
-    if not db.complete_task(body.user, body.task_id):
+    if not db.complete_task(body.user, body.task_id, body.done):
         raise HTTPException(status_code=404, detail="Görev bulunamadı.")
-    return {"done": body.task_id, "streak_days": db.streak_days(body.user)}
+    return {"done": body.task_id, "done_status": body.done, "streak_days": db.streak_days(body.user)}
+
+
+@app.post("/api/tasks/reset")
+def reset_tasks(user: str = Query(...)):
+    today = date.today().isoformat()
+    db.reset_tasks_for_day(user, today)
+    return {"status": "ok"}
 
 
 @app.get("/api/export")
@@ -154,10 +166,16 @@ def export(user: str = Query(...), fmt: str = Query("csv", pattern="^(csv|json)$
 
 @app.get("/api/health")
 def health():
+    llm_prov = "rule_based"
+    if config.GROQ_API_KEY:
+        llm_prov = "groq"
+    elif config.GEMINI_API_KEY:
+        llm_prov = "gemini"
+    elif config.OPENAI_API_KEY:
+        llm_prov = "openai"
     return {
         "status": "ok",
-        "llm": "gemini" if config.GEMINI_API_KEY
-               else ("openai" if config.OPENAI_API_KEY else "rule_based"),
+        "llm": llm_prov,
     }
 
 

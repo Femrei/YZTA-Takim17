@@ -61,20 +61,24 @@ def analyze(username: str) -> dict:
     cats = _by_category(week)
     subs = _by_subtype(week)
 
-    # trend serisi (son 30 gün, gün bazında kategori kırılımı)
+    # trend serisi (son 14 gün, kesintisiz gün bazında kategori kırılımı)
     raw = db.daily_totals(username, days=30)
     series: dict[str, dict[str, float]] = {}
     for r in raw:
         series.setdefault(r["entry_date"], {})[r["category"]] = round(r["total"], 2)
-    trend = [
-        {
-            "date": d,
-            "transport": v.get("transport", 0.0),
-            "electricity": v.get("electricity", 0.0),
-            "total": round(v.get("transport", 0.0) + v.get("electricity", 0.0), 2),
-        }
-        for d, v in sorted(series.items())
-    ]
+
+    trend = []
+    for i in reversed(range(14)):
+        d_str = (today - timedelta(days=i)).isoformat()
+        v = series.get(d_str, {})
+        t_val = v.get("transport", 0.0)
+        e_val = v.get("electricity", 0.0)
+        trend.append({
+            "date": d_str,
+            "transport": t_val,
+            "electricity": e_val,
+            "total": round(t_val + e_val, 2),
+        })
 
     # haftalık değişim
     change_pct = None

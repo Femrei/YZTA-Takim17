@@ -41,7 +41,8 @@ def test_invalid_amount_rejected():
 
 # -------------------------------------------------------- Insight Agent
 def test_insight_totals_and_top_category():
-    u = "insight_u"
+    import uuid
+    u = f"insight_u_{uuid.uuid4().hex[:6]}"
     tracking.track_transport(u, "car_petrol", 50)   # 8.55 kg
     tracking.track_electricity(u, 10)               # 4.78 kg
     a = insight.analyze(u)
@@ -151,3 +152,63 @@ def test_task_reset():
     # verify it is reset
     d3 = client.get("/api/dashboard", params={"user": user}).json()
     assert d3["tasks"][0]["done"] == 0
+
+
+def test_user_registration_and_login():
+    import uuid
+    uid = uuid.uuid4().hex[:6]
+    uname = f"auth_user_{uid}"
+    uemail = f"test_{uid}@carbon.app"
+
+    # Register user
+    reg_data = {
+        "username": uname,
+        "email": uemail,
+        "password": "securepassword123",
+        "full_name": "Test User"
+    }
+    r = client.post("/api/auth/register", json=reg_data)
+    assert r.status_code == 200
+    res = r.json()
+    assert res["username"] == uname
+    assert "token" in res
+    token = res["token"]
+
+    # Check /api/auth/me with Bearer token
+    r_me = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert r_me.status_code == 200
+    assert r_me.json()["email"] == uemail
+
+    # Login user
+    login_data = {
+        "username_or_email": uemail,
+        "password": "securepassword123"
+    }
+    r_log = client.post("/api/auth/login", json=login_data)
+    assert r_log.status_code == 200
+    login_token = r_log.json()["token"]
+
+    # Logout
+    r_out = client.post("/api/auth/logout", headers={"Authorization": f"Bearer {login_token}"})
+    assert r_out.status_code == 200
+
+
+def test_firebase_config_and_auth():
+    # Config endpoint
+    r_conf = client.get("/api/config/firebase")
+    assert r_conf.status_code == 200
+    assert "enabled" in r_conf.json()
+
+    # Firebase Auth Sync
+    fb_data = {
+        "firebase_uid": "fb_uid_12345",
+        "email": "fb_user@carbon.app",
+        "full_name": "Firebase User"
+    }
+    r_fb = client.post("/api/auth/firebase", json=fb_data)
+    assert r_fb.status_code == 200
+    res = r_fb.json()
+    assert res["email"] == "fb_user@carbon.app"
+    assert "token" in res
+
+

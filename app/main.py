@@ -9,7 +9,7 @@ import io
 from datetime import date
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -40,6 +40,26 @@ STATIC_DIR = Path(__file__).parent / "static"
 
 
 # ------------------------------------------------------------- şemalar
+class RegisterIn(BaseModel):
+    username: str = Field(..., min_length=3, max_length=32)
+    email: str = Field(..., min_length=5, max_length=128)
+    password: str = Field(..., min_length=6, max_length=128)
+    full_name: str | None = None
+
+
+class LoginIn(BaseModel):
+    username_or_email: str = Field(..., min_length=1)
+    password: str = Field(..., min_length=1)
+
+
+class FirebaseAuthIn(BaseModel):
+    firebase_uid: str
+    email: str | None = None
+    full_name: str | None = None
+    username: str | None = None
+    password: str | None = None
+
+
 class EntryIn(BaseModel):
     user: str = Field(..., min_length=1, max_length=64)
     category: str  # 'transport' | 'electricity'
@@ -59,7 +79,95 @@ class TaskDoneIn(BaseModel):
     done: int = 1
 
 
-# ------------------------------------------------------------- uçlar
+# ------------------------------------------------------------- auth uçları
+@app.get("/api/config/firebase")
+def get_firebase_config():
+    return {
+        "apiKey": config.FIREBASE_API_KEY,
+        "authDomain": config.FIREBASE_AUTH_DOMAIN,
+        "projectId": config.FIREBASE_PROJECT_ID,
+        "storageBucket": config.FIREBASE_STORAGE_BUCKET,
+        "messagingSenderId": config.FIREBASE_MESSAGING_SENDER_ID,
+        "appId": config.FIREBASE_APP_ID,
+        "enabled": bool(config.FIREBASE_API_KEY and config.FIREBASE_PROJECT_ID),
+    }
+
+
+@app.get("/api/auth/resolve-email")
+def resolve_email(identifier: str = Query(...)):
+    email = db.get_email_by_identifier(identifier)
+    return {"email": email}
+
+
+@app.post("/api/auth/firebase")
+def firebase_auth(body: FirebaseAuthIn):
+    try:
+        return db.sync_firebase_user(
+            firebase_uid=body.firebase_uid,
+            email=body.email or "",
+            full_name=body.full_name or "",
+            display_username=body.username or None,
+            password=body.password or None,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/api/auth/register")
+def register(body: RegisterIn):
+    try:
+        return db.register_user(
+            username=body.username,
+            email=body.email,
+            password=body.password,
+            full_name=body.full_name or "",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/api/auth/login")
+def login(body: LoginIn):
+    try:
+        return db.authenticate_user(
+            username_or_email=body.username_or_email,
+            password=body.password,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+
+
+@app.get("/api/auth/me")
+def me(authorization: str | None = Header(None), token: str | None = Query(None)):
+    auth_token = None
+    if authorization and authorization.startswith("Bearer "):
+        auth_token = authorization.split(" ", 1)[1]
+    elif token:
+        auth_token = token
+
+    if not auth_token:
+        raise HTTPException(status_code=401, detail="Oturum jetonu bulunamadı.")
+
+    user = db.get_user_by_token(auth_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Geçersiz veya süresi dolmuş oturum.")
+    return user
+
+
+@app.post("/api/auth/logout")
+def logout(authorization: str | None = Header(None), token: str | None = Query(None)):
+    auth_token = None
+    if authorization and authorization.startswith("Bearer "):
+        auth_token = authorization.split(" ", 1)[1]
+    elif token:
+        auth_token = token
+
+    if auth_token:
+        db.logout_user(auth_token)
+    return {"status": "logged_out"}
+
+
+# ------------------------------------------------------------- genel uçlar
 @app.get("/api/factors")
 def factors():
     return {

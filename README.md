@@ -57,19 +57,21 @@ daha kişisel öneriler üretilir.
 
 ## Kurulum ve Çalıştırma
 
-### Yerel
+### Yerel Çalıştırma
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env        # (opsiyonel) LLM anahtarlarını doldurun
+cp .env.example .env        # (opsiyonel) Firebase ve LLM anahtarlarını doldurun
 uvicorn app.main:app --reload
 ```
 
 Arayüz: http://localhost:8000 · API dokümanı: http://localhost:8000/docs
 
-> **Not:** `GROQ_API_KEY`, `GEMINI_API_KEY` veya `OPENAI_API_KEY` tanımlı değilse Koç Ajanı
-> otomatik olarak yerleşik kural tabanlı koça geçer; uygulama anahtarsız da
-> uçtan uca çalışır.
+> **🔐 Kimlik Doğrulama (Authentication) Esnekliği:**
+> - **Sıfır Konfigürasyon (Tak-Çalıştır):** Projeyi çeken kullanıcı `.env` dosyasına anahtar girmese bile sistem otomatik olarak **Yerel SQLite Auth** modunda çalışır. Kullanıcılar hesap oluşturup giriş yapabilir, sistem sıfır hatayla çalışır.
+> - **Firebase Auth (Google ile 1-Tıkla Giriş):** Firebase kullanmak isteyenler `.env` dosyasına Firebase Web API anahtarlarını girdiğinde **Google ile Giriş Yap** ve Firebase Auth altyapısı otomatik devreye girer.
+
+> **🤖 Yapay Zeka Koç Esnekliği:** `GROQ_API_KEY`, `GEMINI_API_KEY` veya `OPENAI_API_KEY` tanımlı değilse Koç Ajanı otomatik olarak yerleşik kural tabanlı koça geçer; uygulama anahtarsız da uçtan uca çalışır.
 
 ### Docker ile Canlıya Alma / Deploy
 

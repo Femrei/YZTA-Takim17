@@ -4,8 +4,10 @@ Tüm ayarlar ortam değişkenlerinden okunur; hiçbir gizli anahtar koda gömül
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env", override=True)
 
 # Veritabanı
 DB_PATH = os.getenv("CARBON_DB_PATH", str(BASE_DIR / "carbon.db"))
@@ -23,6 +25,15 @@ LLM_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "20"))
 # (~5.4 t/yıl ≈ 14.8 kg/gün). Kullanıcı arayüzden değiştirebilir.
 DEFAULT_DAILY_BUDGET_KG = float(os.getenv("CARBON_DAILY_BUDGET_KG", "15.0"))
 
+# Firebase Ayarları (Opsiyonel — tanımlı ise ön yüzde Firebase Auth aktifleşir)
+FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY", "").strip()
+FIREBASE_AUTH_DOMAIN = os.getenv("FIREBASE_AUTH_DOMAIN", "").strip()
+FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID", "").strip()
+FIREBASE_STORAGE_BUCKET = os.getenv("FIREBASE_STORAGE_BUCKET", "").strip()
+FIREBASE_MESSAGING_SENDER_ID = os.getenv("FIREBASE_MESSAGING_SENDER_ID", "").strip()
+FIREBASE_APP_ID = os.getenv("FIREBASE_APP_ID", "").strip()
+
 # Sunucu
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))
+

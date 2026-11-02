@@ -1,0 +1,3 @@
+# GitHub dil istatistiği (linguist) ayarları
+# Tek dosyalık arayüz, Python backend'in önüne geçmesin.
+app/static/*.html linguist-detectable=false
